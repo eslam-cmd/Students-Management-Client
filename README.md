@@ -12,9 +12,9 @@ Teacher dashboard and student portal for the Student Administration System — b
 
 ## 🌐 Live Demo & Instant Access
 
-The application is deployed and available for interactive preview:[cite: 2]
+The application is deployed and available for interactive preview:
 
-- **Live URL:** [https://e-school-client.vercel.app](https://e-school-client.vercel.app)[cite: 2]
+- **Live URL:** [https://e-school-client.vercel.app](https://e-school-client.vercel.app)
 
 ### 🚀 Instant Student Portal Preview
 To explore student analytics, attendance calendars, and grade views without manual registration:
@@ -142,25 +142,29 @@ App runs at `http://localhost:3000`
 
 ## 📸 Project Screenshots
 
-| 01. Home Page | 02. Teacher Login & 2FA Verification |
-| :---: | :---: |
-| ![Home Page](public/img/1.jpeg) | ![Teacher Login 2FA](public/img/2.jpeg) |
+### 01. Home Page
+![Home Page](public/img/1.jpeg)
 
-| 03. Add New Student | 04. All Students View |
-| :---: | :---: |
-| ![Add New Student](public/img/3.jpeg) | ![All Students View](public/img/4.jpeg) |
+### 02. Teacher Login & 2FA
+![Teacher Login](public/img/2.jpeg)
 
-| 05. Selected Student Analytics & Charts | 06. Student Login via ID |
-| :---: | :---: |
-| ![Student Analytics](public/img/5.jpeg) | ![Student Login via ID](public/img/6.jpeg) |
+### 03. Add New Student
+![Add New Student](public/img/3.jpeg)
 
-| 07. Student Portal Details & Overview |
-| :---: |
-| ![Student Profile Details](public/img/7.jpeg) |
+### 04. All Students View
+![All Students](public/img/4.jpeg)
+
+### 05. Student Analytics
+![Analytics](public/img/5.jpeg)
+
+### 06. Student Login
+![Student Login](public/img/6.jpeg)
+
+### 07. Student Portal
+![Student Portal](public/img/7.jpeg)
+
+
 ---
-
-## 📁 Project Structure
-
 ```
 client/
 ├── .gitignore
