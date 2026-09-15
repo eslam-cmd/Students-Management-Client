@@ -184,7 +184,7 @@ client/
 │   │   ├── auth/
 │   │   │   ├── login-student/
 │   │   │   │   └── Login.jsx
-│   │   │   └── login-tetcher/
+│   │   │   └── login-teacher/
 │   │   │       └── login.jsx
 │   │   ├── home/
 │   │   │   ├── aboutislam/
@@ -231,7 +231,7 @@ client/
 │   │   │       │   └── viewQuizzes.jsx
 │   │   │       └── setting/
 │   │   │           └── teacherProfile.jsx
-│   │   └── Ultimit/
+│   │   └── common/
 │   │       ├── footer.jsx
 │   │       ├── header.jsx
 │   │       └── loading.jsx
