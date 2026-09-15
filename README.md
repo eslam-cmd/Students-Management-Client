@@ -10,6 +10,20 @@ Teacher dashboard and student portal for the Student Administration System — b
 
 ---
 
+## 🌐 Live Demo & Instant Access
+
+The application is deployed and available for interactive preview:[cite: 2]
+
+- **Live URL:** [https://e-school-client.vercel.app](https://e-school-client.vercel.app)[cite: 2]
+
+### 🚀 Instant Student Portal Preview
+To explore student analytics, attendance calendars, and grade views without manual registration:
+1. Navigate to the **Student Login** page.
+2. Enter the following pre-configured Student ID:
+   ```text
+   35861a92-fe20-44dc-8096-edfb6109e7e5
+   ```
+   
 ## ✨ Features
 
 ### Teacher Dashboard
