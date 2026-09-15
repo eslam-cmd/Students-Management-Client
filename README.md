@@ -142,22 +142,21 @@ App runs at `http://localhost:3000`
 
 ## 📸 Project Screenshots
 
-|                        01. Home Page                         |                 02. Teacher Login & 2FA Verification                 |
-| :----------------------------------------------------------: | :------------------------------------------------------------------: |
-| <img src="./public/img/1.jpeg" width="400" alt="Home Page"/> | <img src="./public/img/2.jpeg" width="400" alt="Teacher Login 2FA"/> |
+| 01. Home Page | 02. Teacher Login & 2FA Verification |
+| :---: | :---: |
+| ![Home Page](public/img/1.jpeg) | ![Teacher Login 2FA](public/img/2.jpeg) |
 
-|                        03. Add New Student                         |                        04. All Students View                         |
-| :----------------------------------------------------------------: | :------------------------------------------------------------------: |
-| <img src="./public/img/3.jpeg" width="400" alt="Add New Student"/> | <img src="./public/img/4.jpeg" width="400" alt="All Students View"/> |
+| 03. Add New Student | 04. All Students View |
+| :---: | :---: |
+| ![Add New Student](public/img/3.jpeg) | ![All Students View](public/img/4.jpeg) |
 
-|               05. Selected Student Analytics & Charts                |                        06. Student Login via ID                         |
-| :------------------------------------------------------------------: | :---------------------------------------------------------------------: |
-| <img src="./public/img/5.jpeg" width="400" alt="Student Analytics"/> | <img src="./public/img/6.jpeg" width="400" alt="Student Login via ID"/> |
+| 05. Selected Student Analytics & Charts | 06. Student Login via ID |
+| :---: | :---: |
+| ![Student Analytics](public/img/5.jpeg) | ![Student Login via ID](public/img/6.jpeg) |
 
-|                   07. Student Portal Details & Overview                    |
-| :------------------------------------------------------------------------: |
-| <img src="./public/img/7.jpeg" width="400" alt="Student Profile Details"/> |
-
+| 07. Student Portal Details & Overview |
+| :---: |
+| ![Student Profile Details](public/img/7.jpeg) |
 ---
 
 ## 📁 Project Structure
