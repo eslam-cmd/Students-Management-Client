@@ -10,6 +10,22 @@ Teacher dashboard and student portal for the Student Administration System — b
 
 ---
 
+## 🌐 Live Demo & Instant Access
+
+The application is deployed and available for interactive preview:
+
+- **Live URL:** [https://e-school-client.vercel.app](https://e-school-client.vercel.app)
+
+### 🚀 Instant Student Portal Preview
+
+To explore student analytics, attendance calendars, and grade views without manual registration:
+
+1. Navigate to the **Student Login** page.
+2. Enter the following pre-configured Student ID:
+   ```text
+   35861a92-fe20-44dc-8096-edfb6109e7e5
+   ```
+
 ## ✨ Features
 
 ### Teacher Dashboard
@@ -128,25 +144,35 @@ App runs at `http://localhost:3000`
 
 ## 📸 Project Screenshots
 
-|                        01. Home Page                         |                 02. Teacher Login & 2FA Verification                 |
-| :----------------------------------------------------------: | :------------------------------------------------------------------: |
-| <img src="./public/img/1.jpeg" width="400" alt="Home Page"/> | <img src="./public/img/2.jpeg" width="400" alt="Teacher Login 2FA"/> |
+### 01. Home Page
 
-|                        03. Add New Student                         |                        04. All Students View                         |
-| :----------------------------------------------------------------: | :------------------------------------------------------------------: |
-| <img src="./public/img/3.jpeg" width="400" alt="Add New Student"/> | <img src="./public/img/4.jpeg" width="400" alt="All Students View"/> |
+![Home Page](public/img/1.jpeg)
 
-|               05. Selected Student Analytics & Charts                |                        06. Student Login via ID                         |
-| :------------------------------------------------------------------: | :---------------------------------------------------------------------: |
-| <img src="./public/img/5.jpeg" width="400" alt="Student Analytics"/> | <img src="./public/img/6.jpeg" width="400" alt="Student Login via ID"/> |
+### 02. Teacher Login & 2FA
 
-|                   07. Student Portal Details & Overview                    |
-| :------------------------------------------------------------------------: |
-| <img src="./public/img/7.jpeg" width="400" alt="Student Profile Details"/> |
+![Teacher Login](public/img/2.jpeg)
+
+### 03. Add New Student
+
+![Add New Student](public/img/3.jpeg)
+
+### 04. All Students View
+
+![All Students](public/img/4.jpeg)
+
+### 05. Student Analytics
+
+![Analytics](public/img/5.jpeg)
+
+### 06. Student Login
+
+![Student Login](public/img/6.jpeg)
+
+### 07. Student Portal
+
+![Student Portal](public/img/7.jpeg)
 
 ---
-
-## 📁 Project Structure
 
 ```
 client/
@@ -184,7 +210,7 @@ client/
 │   │   ├── auth/
 │   │   │   ├── login-student/
 │   │   │   │   └── Login.jsx
-│   │   │   └── login-tetcher/
+│   │   │   └── login-teacher/
 │   │   │       └── login.jsx
 │   │   ├── home/
 │   │   │   ├── aboutislam/
@@ -231,7 +257,7 @@ client/
 │   │   │       │   └── viewQuizzes.jsx
 │   │   │       └── setting/
 │   │   │           └── teacherProfile.jsx
-│   │   └── Ultimit/
+│   │   └── common/
 │   │       ├── footer.jsx
 │   │       ├── header.jsx
 │   │       └── loading.jsx

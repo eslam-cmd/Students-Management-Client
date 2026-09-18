@@ -12,6 +12,9 @@ import {
   FiArrowLeft,
   FiRefreshCw,
   FiKey,
+  FiCopy,
+  FiCheck,
+  FiZap,
 } from "react-icons/fi";
 import {
   Box,
@@ -44,6 +47,10 @@ const API = (
   process.env.NEXT_PUBLIC_API_URL || "https://e-school-server.vercel.app"
 ).replace(/\/$/, "");
 
+// ✅ بيانات الأدمن التجريبية
+const ADMIN_EMAIL = "hdayaaslam34@gmail.com";
+const ADMIN_PASSWORD = "123456";
+
 export default function TeacherLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -51,15 +58,17 @@ export default function TeacherLoginPage() {
   const [otp, setOtp] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  // 1: تسجيل الدخول, 2: أدخال OTP الدخول, 3: طلب إعادة ضبط كلمة السر, 4: إدخال OTP وكلمة السر الجديدة
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
   const [message, setMessage] = useState({ type: "", text: "" });
+
+  const [devOtp, setDevOtp] = useState(null);
+  const [copiedField, setCopiedField] = useState(null);
+
   const router = useRouter();
 
-  // عداد إعادة الإرسال
   useEffect(() => {
     let timer;
     if (resendTimer > 0) {
@@ -70,11 +79,37 @@ export default function TeacherLoginPage() {
 
   const handleTogglePassword = () => setShowPassword((prev) => !prev);
 
-  // 1️⃣ المرحلة الأولى: طلب الـ OTP لتسجيل الدخول
+  const handleCopy = async (value, field) => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopiedField(field);
+      setTimeout(() => setCopiedField(null), 1500);
+    } catch (err) {
+      console.error("Copy failed:", err);
+    }
+  };
+
+  const handleFillAdmin = () => {
+    setEmail(ADMIN_EMAIL);
+    setPassword(ADMIN_PASSWORD);
+    setMessage({ type: "", text: "" });
+  };
+
+  const handleAutoFillOtp = () => {
+    if (devOtp) {
+      setOtp(devOtp);
+      setMessage({
+        type: "success",
+        text: "Code auto-filled! Click Verify to continue.",
+      });
+    }
+  };
+
   const handleInitialLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage({ type: "", text: "" });
+    setDevOtp(null);
 
     try {
       const res = await fetch(`${API}/api/teacher/login`, {
@@ -88,6 +123,11 @@ export default function TeacherLoginPage() {
 
       if (!res.ok) {
         throw new Error(data.error || "Login request failed");
+      }
+
+      if (data.devOtp) {
+        setDevOtp(data.devOtp);
+        console.log("🔑 [ADMIN OTP]:", data.devOtp);
       }
 
       setMessage({
@@ -112,7 +152,7 @@ export default function TeacherLoginPage() {
       const res = await fetch(`${API}/api/teacher/verify-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include", // ⚠️ ضروري جداً لاستقبال الكوكي
+        credentials: "include",
         body: JSON.stringify({ email, otp }),
       });
 
@@ -127,7 +167,6 @@ export default function TeacherLoginPage() {
         text: "Verified successfully! Redirecting...",
       });
 
-      // ✅ التوجيه المباشر لتسجيل الجلسة
       setTimeout(() => {
         window.location.href = "/teacher/dashboard-admin";
       }, 300);
@@ -138,7 +177,6 @@ export default function TeacherLoginPage() {
     }
   };
 
-  // 🔁 زر إعادة إرسال الرمز (Resend OTP)
   const handleResendOTP = async () => {
     if (resendTimer > 0) return;
     setResendLoading(true);
@@ -159,6 +197,11 @@ export default function TeacherLoginPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to resend code");
 
+      if (data.devOtp) {
+        setDevOtp(data.devOtp);
+        console.log("🔑 [NEW OTP]:", data.devOtp);
+      }
+
       setMessage({
         type: "success",
         text: "A new OTP code has been sent to your email.",
@@ -171,11 +214,11 @@ export default function TeacherLoginPage() {
     }
   };
 
-  // 3️⃣ طلب إعادة ضبط كلمة المرور (Forgot Password)
   const handleRequestResetPassword = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage({ type: "", text: "" });
+    setDevOtp(null);
 
     try {
       const res = await fetch(`${API}/api/teacher/forgot-password`, {
@@ -186,6 +229,11 @@ export default function TeacherLoginPage() {
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Request failed");
+
+      if (data.devOtp) {
+        setDevOtp(data.devOtp);
+        console.log("🔑 [RESET OTP]:", data.devOtp);
+      }
 
       setMessage({
         type: "success",
@@ -200,7 +248,6 @@ export default function TeacherLoginPage() {
     }
   };
 
-  // 4️⃣ تعيين كلمة المرور الجديدة بعد تأكيد الـ OTP
   const handleResetPassword = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -225,6 +272,7 @@ export default function TeacherLoginPage() {
         setPassword("");
         setNewPassword("");
         setOtp("");
+        setDevOtp(null);
         setMessage({ type: "", text: "" });
       }, 2000);
     } catch (err) {
@@ -264,6 +312,151 @@ export default function TeacherLoginPage() {
           {/* 1️⃣ نموذج تسجيل الدخول */}
           {step === 1 && (
             <Box component="form" onSubmit={handleInitialLogin} sx={{ p: 3 }}>
+              {/* ✅ Admin Test Account */}
+              <Paper
+                elevation={0}
+                sx={{
+                  p: 2,
+                  mb: 3,
+                  background:
+                    "linear-gradient(135deg, rgba(25,118,210,0.08) 0%, rgba(33,150,243,0.04) 100%)",
+                  border: "1px dashed",
+                  borderColor: "primary.main",
+                  borderRadius: 2,
+                }}
+              >
+                <Box display="flex" alignItems="center" gap={1} mb={1.5}>
+                  <FiKey color="#1976d2" size={16} />
+                  <Typography
+                    variant="caption"
+                    fontWeight="bold"
+                    color="primary"
+                    sx={{ textTransform: "uppercase", letterSpacing: 1 }}
+                  >
+                    Admin Test Account
+                  </Typography>
+                </Box>
+
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  display="block"
+                  mb={1.5}
+                  textAlign="center"
+                >
+                  Use the credentials below to test the admin experience
+                </Typography>
+
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  gap={1}
+                  sx={{
+                    bgcolor: "background.paper",
+                    border: "1px solid",
+                    borderColor: "divider",
+                    borderRadius: 1.5,
+                    px: 1.5,
+                    py: 1,
+                    mb: 1,
+                  }}
+                >
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    gap={1}
+                    minWidth={0}
+                    flex={1}
+                  >
+                    <FiMail color="#1976d2" size={14} />
+                    <Typography variant="caption" fontFamily="monospace" noWrap>
+                      {ADMIN_EMAIL}
+                    </Typography>
+                  </Box>
+                  <IconButton
+                    size="small"
+                    onClick={() => handleCopy(ADMIN_EMAIL, "email")}
+                  >
+                    {copiedField === "email" ? (
+                      <FiCheck size={14} color="#22c55e" />
+                    ) : (
+                      <FiCopy size={14} />
+                    )}
+                  </IconButton>
+                </Box>
+
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  gap={1}
+                  sx={{
+                    bgcolor: "background.paper",
+                    border: "1px solid",
+                    borderColor: "divider",
+                    borderRadius: 1.5,
+                    px: 1.5,
+                    py: 1,
+                    mb: 1.5,
+                  }}
+                >
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    gap={1}
+                    minWidth={0}
+                    flex={1}
+                  >
+                    <FiLock color="#1976d2" size={14} />
+                    <Typography
+                      variant="caption"
+                      fontFamily="monospace"
+                      sx={{ letterSpacing: 3 }}
+                    >
+                      {ADMIN_PASSWORD}
+                    </Typography>
+                  </Box>
+                  <IconButton
+                    size="small"
+                    onClick={() => handleCopy(ADMIN_PASSWORD, "password")}
+                  >
+                    {copiedField === "password" ? (
+                      <FiCheck size={14} color="#22c55e" />
+                    ) : (
+                      <FiCopy size={14} />
+                    )}
+                  </IconButton>
+                </Box>
+
+                <Button
+                  fullWidth
+                  size="small"
+                  variant="contained"
+                  startIcon={<FiZap size={14} />}
+                  onClick={handleFillAdmin}
+                  sx={{
+                    textTransform: "none",
+                    fontWeight: "bold",
+                    fontSize: 12,
+                    py: 1,
+                  }}
+                >
+                  Auto-fill Credentials
+                </Button>
+
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  display="block"
+                  textAlign="center"
+                  mt={1}
+                  sx={{ fontSize: 10 }}
+                >
+                  ⚡ For testing purposes only
+                </Typography>
+              </Paper>
+
               <TextField
                 fullWidth
                 margin="normal"
@@ -361,7 +554,7 @@ export default function TeacherLoginPage() {
             </Box>
           )}
 
-          {/* 2️⃣ نموذج إدخال OTP وتسجيل الدخول */}
+          {/* 2️⃣ نموذج إدخال OTP */}
           {step === 2 && (
             <Box component="form" onSubmit={handleVerifyOTP} sx={{ p: 3 }}>
               <Typography
@@ -373,6 +566,94 @@ export default function TeacherLoginPage() {
                 We have sent a 6-digit verification code to:{" "}
                 <strong>{email}</strong>
               </Typography>
+
+              {/* ✅ عرض OTP للأدمن */}
+              {devOtp && (
+                <Paper
+                  elevation={0}
+                  sx={{
+                    p: 2,
+                    mb: 2,
+                    background:
+                      "linear-gradient(135deg, rgba(255,193,7,0.15) 0%, rgba(255,152,0,0.08) 100%)",
+                    border: "2px dashed",
+                    borderColor: "warning.main",
+                    borderRadius: 2,
+                  }}
+                >
+                  <Box display="flex" alignItems="center" gap={1} mb={1.5}>
+                    <FiKey color="#f59e0b" size={16} />
+                    <Typography
+                      variant="caption"
+                      fontWeight="bold"
+                      sx={{
+                        color: "#f59e0b",
+                        textTransform: "uppercase",
+                        letterSpacing: 1,
+                      }}
+                    >
+                      Admin Quick Test Code
+                    </Typography>
+                  </Box>
+
+                  <Box
+                    display="flex"
+                    justifyContent="center"
+                    gap={0.5}
+                    mb={1.5}
+                  >
+                    {devOtp.split("").map((digit, idx) => (
+                      <Box
+                        key={idx}
+                        sx={{
+                          width: 36,
+                          height: 44,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          bgcolor: "#0f172a",
+                          border: "2px solid",
+                          borderColor: "#f59e0b",
+                          borderRadius: 1.5,
+                          fontFamily: "monospace",
+                          fontSize: 20,
+                          fontWeight: "bold",
+                          color: "#fbbf24",
+                        }}
+                      >
+                        {digit}
+                      </Box>
+                    ))}
+                  </Box>
+
+                  <Button
+                    fullWidth
+                    size="small"
+                    variant="contained"
+                    color="warning"
+                    startIcon={<FiZap size={14} />}
+                    onClick={handleAutoFillOtp}
+                    sx={{
+                      textTransform: "none",
+                      fontWeight: "bold",
+                      fontSize: 12,
+                      py: 1,
+                    }}
+                  >
+                    Auto-fill the Code
+                  </Button>
+
+                  <Typography
+                    variant="caption"
+                    display="block"
+                    textAlign="center"
+                    mt={1}
+                    sx={{ fontSize: 10, color: "text.secondary" }}
+                  >
+                    ⚡ For testing purposes only
+                  </Typography>
+                </Paper>
+              )}
 
               <TextField
                 fullWidth
@@ -433,6 +714,7 @@ export default function TeacherLoginPage() {
                     setStep(1);
                     setMessage({ type: "", text: "" });
                     setOtp("");
+                    setDevOtp(null);
                   }}
                   sx={{ textTransform: "none" }}
                 >
@@ -542,6 +824,83 @@ export default function TeacherLoginPage() {
                 Enter the OTP sent to <strong>{email}</strong> along with your
                 new password.
               </Typography>
+
+              {devOtp && (
+                <Paper
+                  elevation={0}
+                  sx={{
+                    p: 2,
+                    mb: 2,
+                    background:
+                      "linear-gradient(135deg, rgba(255,193,7,0.15) 0%, rgba(255,152,0,0.08) 100%)",
+                    border: "2px dashed",
+                    borderColor: "warning.main",
+                    borderRadius: 2,
+                  }}
+                >
+                  <Box display="flex" alignItems="center" gap={1} mb={1.5}>
+                    <FiKey color="#f59e0b" size={16} />
+                    <Typography
+                      variant="caption"
+                      fontWeight="bold"
+                      sx={{
+                        color: "#f59e0b",
+                        textTransform: "uppercase",
+                        letterSpacing: 1,
+                      }}
+                    >
+                      Admin Reset Code
+                    </Typography>
+                  </Box>
+
+                  <Box
+                    display="flex"
+                    justifyContent="center"
+                    gap={0.5}
+                    mb={1.5}
+                  >
+                    {devOtp.split("").map((digit, idx) => (
+                      <Box
+                        key={idx}
+                        sx={{
+                          width: 36,
+                          height: 44,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          bgcolor: "#0f172a",
+                          border: "2px solid",
+                          borderColor: "#f59e0b",
+                          borderRadius: 1.5,
+                          fontFamily: "monospace",
+                          fontSize: 20,
+                          fontWeight: "bold",
+                          color: "#fbbf24",
+                        }}
+                      >
+                        {digit}
+                      </Box>
+                    ))}
+                  </Box>
+
+                  <Button
+                    fullWidth
+                    size="small"
+                    variant="contained"
+                    color="warning"
+                    startIcon={<FiZap size={14} />}
+                    onClick={() => setOtp(devOtp)}
+                    sx={{
+                      textTransform: "none",
+                      fontWeight: "bold",
+                      fontSize: 12,
+                      py: 1,
+                    }}
+                  >
+                    Auto-fill Code
+                  </Button>
+                </Paper>
+              )}
 
               <TextField
                 fullWidth
