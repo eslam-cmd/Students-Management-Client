@@ -17,15 +17,23 @@ The application is deployed and available for interactive preview:
 - **Live URL:** [https://e-school-client.vercel.app](https://e-school-client.vercel.app)
 
 ### 🚀 Instant Student Portal Preview
+<<<<<<< HEAD
 
 To explore student analytics, attendance calendars, and grade views without manual registration:
 
+=======
+To explore student analytics, attendance calendars, and grade views without manual registration:
+>>>>>>> 187e3b291233df3f13df7cc1f1c23c9544fb4724
 1. Navigate to the **Student Login** page.
 2. Enter the following pre-configured Student ID:
    ```text
    35861a92-fe20-44dc-8096-edfb6109e7e5
    ```
+<<<<<<< HEAD
 
+=======
+   
+>>>>>>> 187e3b291233df3f13df7cc1f1c23c9544fb4724
 ## ✨ Features
 
 ### Teacher Dashboard
@@ -145,6 +153,7 @@ App runs at `http://localhost:3000`
 ## 📸 Project Screenshots
 
 ### 01. Home Page
+<<<<<<< HEAD
 
 ![Home Page](public/img/1.jpeg)
 
@@ -174,6 +183,30 @@ App runs at `http://localhost:3000`
 
 ---
 
+=======
+![Home Page](public/img/1.jpeg)
+
+### 02. Teacher Login & 2FA
+![Teacher Login](public/img/2.jpeg)
+
+### 03. Add New Student
+![Add New Student](public/img/3.jpeg)
+
+### 04. All Students View
+![All Students](public/img/4.jpeg)
+
+### 05. Student Analytics
+![Analytics](public/img/5.jpeg)
+
+### 06. Student Login
+![Student Login](public/img/6.jpeg)
+
+### 07. Student Portal
+![Student Portal](public/img/7.jpeg)
+
+
+---
+>>>>>>> 187e3b291233df3f13df7cc1f1c23c9544fb4724
 ```
 client/
 ├── .gitignore
