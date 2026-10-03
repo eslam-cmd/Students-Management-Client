@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import {
   Box,
   AppBar,
@@ -24,6 +23,7 @@ import {
   Tab,
   Tooltip,
   CircularProgress,
+  Divider,
 } from "@mui/material";
 import {
   FiMenu,
@@ -32,29 +32,134 @@ import {
   FiBookOpen,
   FiClipboard,
   FiLogOut,
+  FiHome,
 } from "react-icons/fi";
-import PersonIcon from "@mui/icons-material/Person";
-import HomeIcon from "@mui/icons-material/Home";
 import ViewQuizzes from "./sections/quizzes/viewQuizzes";
 import ViewPracticalQuiz from "./sections/practicalQuiz/ViewPracticalQuiz";
 import ViewExams from "./sections/exams/viewExams";
 import ViewPracticalNotes from "./sections/practicalNotes/ViewPracticalNotes";
 import ViewAttendance from "./sections/attendance/viewAttendance";
 import Link from "next/link";
-import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
+import PersonIcon from "@mui/icons-material/Person";
 import BrushIcon from "@mui/icons-material/Brush";
 
-const DRAWER_WIDTH = 280;
+/* ==================== Constants ==================== */
+
+const DRAWER_WIDTH = 260;
+
+// Blue palette (professional)
+const PRIMARY = "#0D8CAB";
+const PRIMARY_LIGHT = "#e6f4f8";
+const PRIMARY_HOVER = "#0a7a94";
+const BORDER = "#e5e7eb";
+const TEXT_PRIMARY = "#111827";
+const TEXT_SECONDARY = "#6b7280";
+const BG = "#f9fafb";
 
 const API = (
   process.env.NEXT_PUBLIC_API_URL || "https://e-school-server.vercel.app"
 ).replace(/\/$/, "");
 
+/* ==================== Styled Components ==================== */
+
 const Root = styled(Box)({
   display: "flex",
   minHeight: "100vh",
-  backgroundColor: "#f9fafb",
+  backgroundColor: BG,
 });
+
+const StyledAppBar = styled(AppBar, {
+  shouldForwardProp: (prop) => prop !== "drawerOpen" && prop !== "isDesktop",
+})(({ theme, drawerOpen, isDesktop }) => ({
+  width: {
+    xs: "100%",
+    lg: isDesktop && drawerOpen ? `calc(100% - ${DRAWER_WIDTH}px)` : "100%",
+  },
+  ml: {
+    lg: isDesktop && drawerOpen ? `${DRAWER_WIDTH}px` : 0,
+  },
+  backgroundColor: "#ffffff",
+  borderBottom: `1px solid ${BORDER}`,
+  boxShadow: "none",
+  color: TEXT_PRIMARY,
+  zIndex: theme.zIndex.drawer + 1,
+  transition: theme.transitions.create(["width", "margin"], {
+    easing: theme.transitions.easing.sharp,
+    duration: 200,
+  }),
+}));
+
+const StyledDrawer = styled(Drawer)(({ theme }) => ({
+  "& .MuiDrawer-paper": {
+    width: DRAWER_WIDTH,
+    boxSizing: "border-box",
+    border: "none",
+    borderRight: `1px solid ${BORDER}`,
+    backgroundColor: "#ffffff",
+    boxShadow: "none",
+  },
+  [theme.breakpoints.down("lg")]: {
+    "& .MuiDrawer-paper": {
+      width: "280px",
+      boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
+    },
+  },
+}));
+
+const MainContent = styled(Box, {
+  shouldForwardProp: (prop) => prop !== "drawerOpen" && prop !== "isDesktop",
+})(({ theme, drawerOpen, isDesktop }) => ({
+  flexGrow: 1,
+  marginLeft: {
+    lg: isDesktop && drawerOpen ? `${DRAWER_WIDTH}px` : 0,
+  },
+  width: {
+    lg: isDesktop && drawerOpen ? `calc(100% - ${DRAWER_WIDTH}px)` : "100%",
+  },
+  transition: theme.transitions.create(["width", "margin"], {
+    easing: theme.transitions.easing.sharp,
+    duration: 200,
+  }),
+}));
+
+const ContentPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(3),
+  borderRadius: "8px",
+  backgroundColor: "#ffffff",
+  border: `1px solid ${BORDER}`,
+  boxShadow: "none",
+  minHeight: "calc(100vh - 120px)",
+  [theme.breakpoints.down("sm")]: {
+    padding: theme.spacing(2),
+  },
+}));
+
+const StyledTabs = styled(Tabs)(({ theme }) => ({
+  minHeight: 44,
+  borderBottom: `1px solid ${BORDER}`,
+  marginBottom: theme.spacing(3),
+  "& .MuiTabs-indicator": {
+    backgroundColor: PRIMARY,
+    height: 2,
+  },
+  "& .MuiTab-root": {
+    minHeight: 44,
+    textTransform: "none",
+    fontWeight: 500,
+    fontSize: "0.875rem",
+    color: TEXT_SECONDARY,
+    padding: theme.spacing(0, 2),
+    "&:hover": {
+      color: PRIMARY,
+    },
+    "&.Mui-selected": {
+      color: PRIMARY,
+      fontWeight: 600,
+    },
+  },
+}));
+
+/* ==================== Sidebar Content ==================== */
 
 const SidebarContent = ({ student, tabs, activeTab, onTabClick, onLogout }) => {
   return (
@@ -66,60 +171,147 @@ const SidebarContent = ({ student, tabs, activeTab, onTabClick, onLogout }) => {
         flexDirection: "column",
       }}
     >
+      {/* Brand */}
       <Box
         sx={{
+          p: 2.5,
+          pb: 2,
           display: "flex",
           alignItems: "center",
-          p: 2,
-          gap: 2,
-          backgroundColor: "#0D8CAB",
+          gap: 1.5,
+          borderBottom: `1px solid ${BORDER}`,
         }}
       >
-        <Avatar sx={{ bgcolor: "white", color: "#0D8CAB" }}>
-          <PersonIcon />
-        </Avatar>
-        <Box>
+        <Box
+          sx={{
+            width: 36,
+            height: 36,
+            borderRadius: "8px",
+            backgroundColor: PRIMARY,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#fff",
+            fontSize: "1rem",
+            fontWeight: 700,
+            flexShrink: 0,
+          }}
+        >
+          E
+        </Box>
+        <Box sx={{ overflow: "hidden" }}>
           <Typography
-            sx={{ color: "#fff" }}
-            variant="subtitle1"
+            fontWeight={700}
+            fontSize="0.95rem"
+            color={TEXT_PRIMARY}
+            noWrap
+            lineHeight={1.2}
+          >
+            EduDash
+          </Typography>
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            noWrap
+            sx={{ fontSize: "0.7rem" }}
+          >
+            Student Portal
+          </Typography>
+        </Box>
+      </Box>
+
+      {/* Student Info */}
+      <Box
+        sx={{
+          p: 2,
+          display: "flex",
+          alignItems: "center",
+          gap: 1.5,
+        }}
+      >
+        <Avatar
+          sx={{
+            bgcolor: PRIMARY_LIGHT,
+            color: PRIMARY,
+            width: 40,
+            height: 40,
+            fontWeight: 600,
+            fontSize: "0.95rem",
+          }}
+        >
+          {student?.name?.[0]?.toUpperCase() || <PersonIcon />}
+        </Avatar>
+        <Box sx={{ overflow: "hidden", flex: 1 }}>
+          <Typography
             fontWeight={600}
+            fontSize="0.85rem"
+            color={TEXT_PRIMARY}
             noWrap
           >
             {student?.name || "Student"}
           </Typography>
           <Typography
-            sx={{ color: "rgba(255,255,255,0.8)" }}
-            variant="body2"
+            variant="caption"
+            color="text.secondary"
             noWrap
+            sx={{ fontSize: "0.72rem" }}
           >
             {student?.specialization
               ? `${student.specialization} Student`
-              : "Student"}
+              : "Student Account"}
           </Typography>
         </Box>
       </Box>
 
-      <List sx={{ flex: 1, p: 0 }}>
+      {/* Navigation */}
+      <List sx={{ flex: 1, px: 1, pt: 1 }}>
+        <Typography
+          sx={{
+            px: 1.5,
+            py: 1,
+            color: "#9ca3af",
+            fontWeight: 600,
+            fontSize: "0.68rem",
+            letterSpacing: "0.8px",
+            textTransform: "uppercase",
+          }}
+        >
+          Menu
+        </Typography>
         {tabs.map((tab) => (
-          <ListItem key={tab.id} disablePadding>
+          <ListItem key={tab.id} disablePadding sx={{ display: "block" }}>
             <Tooltip title={tab.label} placement="right" arrow>
               <ListItemButton
                 selected={activeTab === tab.id}
                 onClick={() => onTabClick(tab.id)}
                 sx={{
-                  "&.Mui-selected": {
-                    backgroundColor: "rgba(13, 140, 171, 0.12)",
-                    borderRight: "4px solid #0D8CAB",
-                  },
+                  borderRadius: 6,
+                  margin: "2px 0",
+                  padding: "10px 12px",
+                  backgroundColor:
+                    activeTab === tab.id ? PRIMARY_LIGHT : "transparent",
+                  color: activeTab === tab.id ? PRIMARY : TEXT_SECONDARY,
+                  fontWeight: activeTab === tab.id ? 600 : 500,
+                  fontSize: "0.875rem",
+                  minHeight: 42,
+                  transition: "background-color 0.15s ease, color 0.15s ease",
                   "&:hover": {
-                    backgroundColor: "rgba(13, 140, 171, 0.08)",
+                    backgroundColor:
+                      activeTab === tab.id ? PRIMARY_LIGHT : "#f3f4f6",
+                    color: activeTab === tab.id ? PRIMARY : TEXT_PRIMARY,
+                  },
+                  "&.Mui-selected": {
+                    backgroundColor: PRIMARY_LIGHT,
+                    "&:hover": {
+                      backgroundColor: PRIMARY_LIGHT,
+                    },
                   },
                 }}
               >
                 <ListItemIcon
                   sx={{
-                    color: activeTab === tab.id ? "#0D8CAB" : "gray",
-                    minWidth: 40,
+                    color: "inherit",
+                    minWidth: 32,
                   }}
                 >
                   {tab.icon}
@@ -128,59 +320,105 @@ const SidebarContent = ({ student, tabs, activeTab, onTabClick, onLogout }) => {
                   primary={tab.label}
                   primaryTypographyProps={{
                     noWrap: true,
-                    fontWeight: activeTab === tab.id ? 600 : 400,
+                    fontSize: "0.875rem",
+                    fontWeight: activeTab === tab.id ? 600 : 500,
                   }}
                 />
               </ListItemButton>
             </Tooltip>
           </ListItem>
         ))}
+      </List>
 
-        <ListItem disablePadding>
+      {/* Bottom Actions */}
+      <Box sx={{ px: 1, pb: 1.5 }}>
+        <Divider sx={{ mx: 1, mb: 1 }} />
+
+        <ListItem disablePadding sx={{ display: "block" }}>
+          <Tooltip title="Back to Home" placement="right" arrow>
+            <ListItemButton
+              component={Link}
+              href="/"
+              sx={{
+                borderRadius: 6,
+                margin: "2px 0",
+                padding: "10px 12px",
+                color: TEXT_SECONDARY,
+                minHeight: 42,
+                transition: "background-color 0.15s ease",
+                "&:hover": {
+                  backgroundColor: "#f3f4f6",
+                  color: PRIMARY,
+                },
+              }}
+            >
+              <ListItemIcon sx={{ color: "inherit", minWidth: 32 }}>
+                <FiHome size={18} />
+              </ListItemIcon>
+              <ListItemText
+                primary="Back to Home"
+                primaryTypographyProps={{ fontSize: "0.875rem" }}
+              />
+            </ListItemButton>
+          </Tooltip>
+        </ListItem>
+
+        <ListItem disablePadding sx={{ display: "block" }}>
           <Tooltip title="Logout" placement="right" arrow>
             <ListItemButton
               onClick={onLogout}
               sx={{
-                color: "error.main",
-                "&:hover": { backgroundColor: "#fee2e2" },
+                borderRadius: 6,
+                margin: "2px 0",
+                padding: "10px 12px",
+                color: "#dc2626",
+                minHeight: 42,
+                transition: "background-color 0.15s ease",
+                "&:hover": {
+                  backgroundColor: "#fef2f2",
+                  color: "#dc2626",
+                },
               }}
             >
-              <ListItemIcon sx={{ color: "error.main", minWidth: 40 }}>
-                <FiLogOut />
+              <ListItemIcon sx={{ color: "inherit", minWidth: 32 }}>
+                <FiLogOut size={18} />
               </ListItemIcon>
-              <ListItemText primary="Logout" />
+              <ListItemText
+                primary="Logout"
+                primaryTypographyProps={{ fontSize: "0.875rem" }}
+              />
             </ListItemButton>
           </Tooltip>
         </ListItem>
-      </List>
 
-      <Box
-        sx={{
-          mt: 2,
-          px: 2,
-          py: 1,
-          borderTop: 1,
-          borderColor: "divider",
-          textAlign: "center",
-        }}
-      >
-        <Typography
-          variant="caption"
-          sx={{ color: "#0D8CAB", fontWeight: 500, fontSize: "0.65rem" }}
-        >
-          <BrushIcon style={{ fontSize: "10px" }} /> Powered by Islam Hadaya
-        </Typography>
+        <Box sx={{ textAlign: "center", pt: 1.5 }}>
+          <Typography
+            variant="caption"
+            sx={{
+              color: "#9ca3af",
+              fontSize: "0.68rem",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 0.5,
+            }}
+          >
+            <BrushIcon style={{ fontSize: "11px" }} />
+            Powered by Islam Hadaya
+          </Typography>
+        </Box>
       </Box>
     </Box>
   );
 };
 
+/* ==================== Main Component ==================== */
+
 export default function DashboardStudent() {
   const theme = useTheme();
-  const router = useRouter();
   const isDesktop = useMediaQuery(theme.breakpoints.up("lg"));
 
-  const [drawerOpen, setDrawerOpen] = useState(() => isDesktop);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("Quizzes");
   const [student, setStudent] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -189,16 +427,18 @@ export default function DashboardStudent() {
   const [examTab, setExamTab] = useState(0);
 
   const tabs = [
-    { id: "Quizzes", label: "Quizzes", icon: <FiBookOpen /> },
-    { id: "Exams", label: "Notes", icon: <FiClipboard /> },
-    { id: "Attendance", label: "Attendance", icon: <FiCalendar /> },
+    { id: "Quizzes", label: "Quizzes", icon: <FiBookOpen size={18} /> },
+    { id: "Exams", label: "Notes", icon: <FiClipboard size={18} /> },
+    { id: "Attendance", label: "Attendance", icon: <FiCalendar size={18} /> },
   ];
 
+  // Auto-open drawer on desktop
   useEffect(() => {
     if (isDesktop) setDrawerOpen(true);
+    else setDrawerOpen(false);
   }, [isDesktop]);
 
-  // ✅ جلب بيانات حساب الطالب باستخدام HttpOnly Cookie حصراً
+  /* ============ Fetch Profile ============ */
   const verifyAndFetchProfile = useCallback(async () => {
     try {
       const res = await fetch(`${API}/api/students/account/me`, {
@@ -223,10 +463,8 @@ export default function DashboardStudent() {
       const data = await res.json();
       setStudent(data);
     } catch (err) {
-      // تشخيص دقيق للخطأ
       console.error("Network or Fetch Error:", err.message);
 
-      // عدم إعادة التوجيه الفوري في بيئة التطوير للتمكن من فحص الـ Network Tab
       if (process.env.NODE_ENV === "production") {
         window.location.href = "/student/login";
       }
@@ -239,7 +477,7 @@ export default function DashboardStudent() {
     verifyAndFetchProfile();
   }, [verifyAndFetchProfile]);
 
-  // ✅ تسجيل خروج الطالب بمسار الكوكي
+  /* ============ Logout ============ */
   const handleLogout = async () => {
     try {
       setLoading(true);
@@ -260,26 +498,26 @@ export default function DashboardStudent() {
     setDrawerOpen((prev) => !prev);
   };
 
+  const handleTabClick = (id) => {
+    setActiveTab(id);
+    if (!isDesktop) setDrawerOpen(false);
+  };
+
+  /* ============ Content Renderer ============ */
   const renderContent = () => {
     switch (activeTab) {
       case "Quizzes":
         return (
-          <Box sx={{ width: "100%", marginTop: "30px" }}>
-            <Tabs
+          <Box sx={{ width: "100%" }}>
+            <StyledTabs
               value={quizTab}
-              onChange={(e, newValue) => setQuizTab(newValue)}
-              sx={{
-                "& .MuiTab-root": {
-                  fontSize: { xs: "0.7rem", sm: "0.8rem", md: "0.9rem" },
-                  fontWeight: 600,
-                  textTransform: "none",
-                },
-              }}
+              onChange={(e, v) => setQuizTab(v)}
+              variant="scrollable"
+              scrollButtons="auto"
             >
               <Tab label="Theory Quizzes" />
               <Tab label="Practical Quizzes" />
-            </Tabs>
-            {/* ✅ إرسال كائن الكويزات المجلوب للفرونت إند */}
+            </StyledTabs>
             {quizTab === 0 && <ViewQuizzes data={student?.quizzes} />}
             {quizTab === 1 && <ViewPracticalQuiz data={student?.quizzes} />}
           </Box>
@@ -287,22 +525,16 @@ export default function DashboardStudent() {
 
       case "Exams":
         return (
-          <Box sx={{ width: "100%", marginTop: "30px" }}>
-            <Tabs
+          <Box sx={{ width: "100%" }}>
+            <StyledTabs
               value={examTab}
-              onChange={(e, newValue) => setExamTab(newValue)}
-              sx={{
-                "& .MuiTab-root": {
-                  fontSize: { xs: "0.7rem", sm: "0.8rem", md: "0.9rem" },
-                  fontWeight: 600,
-                  textTransform: "none",
-                },
-              }}
+              onChange={(e, v) => setExamTab(v)}
+              variant="scrollable"
+              scrollButtons="auto"
             >
               <Tab label="Theory Notes" />
               <Tab label="Practical Notes" />
-            </Tabs>
-            {/* ✅ إرسال كائن الملاحظات/الامتحانات المجلوب للفرونت إند */}
+            </StyledTabs>
             {examTab === 0 && <ViewExams data={student?.notes} />}
             {examTab === 1 && <ViewPracticalNotes data={student?.notes} />}
           </Box>
@@ -310,22 +542,43 @@ export default function DashboardStudent() {
 
       case "Attendance":
         return (
-          <Box sx={{ width: "100%", marginTop: "30px" }}>
-            <Typography
-              variant="h6"
-              fontWeight={600}
+          <Box sx={{ width: "100%" }}>
+            <Box
               sx={{
-                mb: 2,
-                fontSize: { xs: "1rem", sm: "1.1rem", md: "1.25rem" },
                 display: "flex",
                 alignItems: "center",
                 gap: 1,
+                mb: 3,
               }}
             >
-              <FiCalendar style={{ color: "#0D8CAB" }} />
-              Attendance Record
-            </Typography>
-            {/* ✅ إرسال بيانات السجل المجلوبة للفرونت إند */}
+              <Box
+                sx={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: "8px",
+                  backgroundColor: PRIMARY_LIGHT,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: PRIMARY,
+                }}
+              >
+                <FiCalendar size={18} />
+              </Box>
+              <Box>
+                <Typography
+                  variant="h6"
+                  fontWeight={600}
+                  fontSize="1.05rem"
+                  color={TEXT_PRIMARY}
+                >
+                  Attendance Record
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Your daily attendance history
+                </Typography>
+              </Box>
+            </Box>
             <ViewAttendance data={student?.attendance} />
           </Box>
         );
@@ -335,6 +588,7 @@ export default function DashboardStudent() {
     }
   };
 
+  /* ============ Loading ============ */
   if (loading) {
     return (
       <Box
@@ -344,120 +598,135 @@ export default function DashboardStudent() {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          bgcolor: "#f9fafb",
+          bgcolor: BG,
           gap: 2,
         }}
       >
-        <CircularProgress sx={{ color: "#0D8CAB" }} />
+        <CircularProgress size={40} sx={{ color: PRIMARY }} />
         <Typography variant="body2" color="text.secondary">
-          Verifying session credentials...
+          Verifying session...
         </Typography>
       </Box>
     );
   }
 
+  /* ============ Main Render ============ */
   return (
     <Root>
-      <AppBar
+      <StyledAppBar
         position="fixed"
-        sx={{
-          width: {
-            xs: "100%",
-            lg: drawerOpen ? `calc(100% - ${DRAWER_WIDTH}px)` : "100%",
-          },
-          ml: { lg: drawerOpen ? `${DRAWER_WIDTH}px` : 0 },
-          backgroundColor: "#0D8CAB",
-        }}
+        elevation={0}
+        drawerOpen={drawerOpen}
+        isDesktop={isDesktop}
       >
-        <Toolbar sx={{ justifyContent: "space-between", px: { xs: 1, sm: 2 } }}>
+        <Toolbar
+          sx={{ minHeight: "60px !important", px: { xs: 1.5, sm: 2.5 } }}
+        >
           <IconButton
-            color="inherit"
             edge="start"
             onClick={toggleDrawer}
-            sx={{ mr: 1 }}
+            sx={{
+              mr: 1.5,
+              color: TEXT_PRIMARY,
+              width: 38,
+              height: 38,
+              borderRadius: "8px",
+              "&:hover": {
+                backgroundColor: "#f3f4f6",
+              },
+            }}
           >
-            {drawerOpen ? <FiX /> : <FiMenu />}
+            {drawerOpen && isDesktop ? <FiX /> : <FiMenu />}
           </IconButton>
-          <Typography variant="h6" style={{ color: "#FAF0BE" }} noWrap>
-            <AssignmentIndIcon />
-          </Typography>
+
+          <Box
+            sx={{ flexGrow: 1, display: "flex", alignItems: "center", gap: 1 }}
+          >
+            <Typography
+              variant="h6"
+              noWrap
+              sx={{
+                fontWeight: 600,
+                color: TEXT_PRIMARY,
+                fontSize: { xs: "0.95rem", md: "1.05rem" },
+              }}
+            >
+              {tabs.find((t) => t.id === activeTab)?.label || "Dashboard"}
+            </Typography>
+          </Box>
+
           <Breadcrumbs
             separator="›"
-            sx={{ color: "inherit", display: { xs: "none", sm: "flex" } }}
+            sx={{
+              display: { xs: "none", sm: "flex" },
+              "& .MuiBreadcrumbs-separator": {
+                color: "#d1d5db",
+              },
+            }}
           >
             <Link
               href="/"
               style={{
                 textDecoration: "none",
-                fontSize: "16px",
-                color: "#FAF0BE",
-                fontWeight: "700",
+                fontSize: "0.8rem",
+                color: TEXT_SECONDARY,
                 display: "flex",
                 alignItems: "center",
                 gap: "4px",
+                fontWeight: 500,
               }}
             >
-              <HomeIcon /> Back to Home
+              <FiHome size={14} />
+              Home
             </Link>
           </Breadcrumbs>
+
+          <Avatar
+            sx={{
+              ml: 2,
+              width: 34,
+              height: 34,
+              bgcolor: PRIMARY_LIGHT,
+              color: PRIMARY,
+              fontWeight: 600,
+              fontSize: "0.85rem",
+            }}
+          >
+            {student?.name?.[0]?.toUpperCase() || <PersonIcon />}
+          </Avatar>
         </Toolbar>
-      </AppBar>
+      </StyledAppBar>
 
       <Box component="nav">
-        <Drawer
+        <StyledDrawer
           variant={isDesktop ? "persistent" : "temporary"}
           open={drawerOpen}
           onClose={toggleDrawer}
           ModalProps={{ keepMounted: true }}
-          sx={{
-            "& .MuiDrawer-paper": {
-              width: { xs: "80vw", sm: "60vw", md: DRAWER_WIDTH },
-              maxWidth: "100%",
-              boxSizing: "border-box",
-              backgroundColor: "#ffffff",
-              boxShadow: "2px 0 8px rgba(0,0,0,0.1)",
-            },
-          }}
         >
           <SidebarContent
             student={student}
             tabs={tabs}
             activeTab={activeTab}
-            onTabClick={(id) => {
-              setActiveTab(id);
-              if (!isDesktop) toggleDrawer();
-            }}
+            onTabClick={handleTabClick}
             onLogout={handleLogout}
           />
-        </Drawer>
+        </StyledDrawer>
       </Box>
 
-      <Box
+      <MainContent
         component="main"
+        drawerOpen={drawerOpen}
+        isDesktop={isDesktop}
         sx={{
-          flexGrow: 1,
-          p: { xs: 1, sm: 2, md: 3 },
-          mt: { xs: 8, lg: 8 },
-          ml: { lg: drawerOpen ? `${DRAWER_WIDTH}px` : 0 },
-          width: {
-            xs: "100%",
-            lg: drawerOpen ? `calc(100% - ${DRAWER_WIDTH}px)` : "100%",
-          },
-          transition: "all 0.2s ease-in-out",
+          p: { xs: 1.5, sm: 2, md: 2.5 },
+          mt: "60px",
         }}
       >
-        <Paper
-          sx={{
-            borderRadius: 2,
-            boxShadow: 1,
-            p: { xs: 1.5, sm: 2.5, md: 3 },
-            minHeight: "calc(100vh - 110px)",
-            backgroundColor: "#ffffff",
-          }}
-        >
-          {renderContent()}
-        </Paper>
-      </Box>
+        <Box sx={{ maxWidth: 1200, mx: "auto", width: "100%" }}>
+          <ContentPaper>{renderContent()}</ContentPaper>
+        </Box>
+      </MainContent>
     </Root>
   );
 }
